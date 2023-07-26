@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useUnique } from "../hooks/useUnique";
 import { UsersBox } from "./UsersBox";
 import { MessagesBox } from "./MessagesBox";
@@ -32,7 +32,6 @@ export function MainBox({
   isSocketOpen,
   openSocket,
 }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const [blockedUsernames, setBlockedUsernames] = useState<string[]>([]);
   const filteredMessages = useMemo(
     () => messages.filter((m) => !blockedUsernames.includes(m.user.username)),
@@ -60,7 +59,6 @@ export function MainBox({
   const [showUsersBox, setShowUsersBox] = useState(false);
 
   const showUserDialog = (user: IUserWithCount | null) => {
-    dialog.current?.showModal();
     setCurrentUser(user);
   };
 
@@ -106,31 +104,12 @@ export function MainBox({
           sendMessage={sendMessage}
         />
       )}
-      <dialog
-        className="dark:bg-gray-800 dark:text-white "
-        ref={dialog}
-        onClick={(e) => {
-          const dialogDimensions = dialog.current?.getBoundingClientRect();
-          if (!dialogDimensions) return;
-          if (
-            e.clientX < dialogDimensions.left ||
-            e.clientX > dialogDimensions.right ||
-            e.clientY < dialogDimensions.top ||
-            e.clientY > dialogDimensions.bottom
-          ) {
-            dialog.current?.close();
-          }
-        }}
-      >
-        {currentUser && (
-          <UserDialog
-            filteredUsers={blockedUsernames}
-            setFilteredUsers={setBlockedUsernames}
-            user={currentUser}
-            dialog={dialog.current}
-          />
-        )}
-      </dialog>
+      <UserDialog
+        filteredUsers={blockedUsernames}
+        setFilteredUsers={setBlockedUsernames}
+        user={currentUser}
+        closeDialog={() => setCurrentUser(null)}
+      />
     </div>
   );
 }
