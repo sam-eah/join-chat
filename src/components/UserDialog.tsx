@@ -5,7 +5,7 @@ import {
   $blockedUsernames,
   addBlockedUsername,
   removeBlockedUsername,
-} from "../stores/users";
+} from "../stores/messages";
 import { useUserDialog } from "../hooks/useUserDialog";
 
 interface Props {

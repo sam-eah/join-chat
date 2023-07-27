@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { IUserWithCount } from "../api/messageSocket";
 import { UserBtn } from "./UserBtn";
-import { $allowedUsers, $blockedUsers } from "../stores/users";
+import { $allowedUsers, $blockedUsers } from "../stores/messages";
 
 interface Props {
   showUserDialog: (user: IUserWithCount) => void;

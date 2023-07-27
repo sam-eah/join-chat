@@ -3,7 +3,7 @@ import { Message } from "./Message";
 import { MessageResumeBtn } from "./MessageResumeBtn";
 import { MessageForm } from "./MessageForm";
 import { useStore } from "@nanostores/react";
-import { $users } from "../stores/users";
+import { $users, $filteredMessages } from "../stores/messages";
 import {
   $outerDiv,
   $isScrollPaused,
@@ -11,7 +11,6 @@ import {
   validatePause,
 } from "../stores/scroll";
 import { useScrollOnMount } from "../hooks/useScrollOnMount";
-import { $filteredMessages } from "../stores/messages";
 
 interface Props {
   showUserDialog: (user: IUserWithCount) => void;
