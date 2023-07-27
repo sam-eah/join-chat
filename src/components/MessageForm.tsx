@@ -9,6 +9,7 @@ export function MessageForm({}: Props): JSX.Element {
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!input.replaceAll("\n", " ").length) return;
     sendMessage({
       text: input,
       type: "text",
@@ -32,12 +33,7 @@ export function MessageForm({}: Props): JSX.Element {
           setInput(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (
-            e.key !== "Enter" ||
-            e.shiftKey ||
-            !input.replaceAll("\n", " ").length
-          )
-            return;
+          if (e.key !== "Enter" || e.shiftKey) return;
           e.preventDefault();
           form.current?.requestSubmit();
         }}
