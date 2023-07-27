@@ -1,23 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import { scrollToBottom } from "../utils/scrollUtils";
+import { useEffect } from "react";
+import { $isScrollPaused, scrollDown } from "../stores/scroll";
+import { useStore } from "@nanostores/react";
 
 interface Props {
   listeners: React.DependencyList;
+  outerDiv: HTMLElement | null;
 }
 
 export const useAutoScroll = ({ listeners }: Props) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [pause, setPause] = useState(false);
-
-  const scrollDown = () => {
-    scrollToBottom(ref.current);
-  };
+  const isScrollPaused = useStore($isScrollPaused);
 
   useEffect(() => {
-    if (!pause) {
+    if (!isScrollPaused) {
       scrollDown();
     }
-  }, [pause, ...listeners]);
-
-  return { ref, pause, setPause, scrollDown };
+  }, [isScrollPaused, ...listeners]);
 };

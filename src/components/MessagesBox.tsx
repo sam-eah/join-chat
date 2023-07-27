@@ -1,36 +1,28 @@
-import { useEffect } from "react";
-import { IMessage, IUserWithCount } from "../hooks/useMessageSocket";
+import { IUserWithCount } from "../api/messageSocket";
 import { Message } from "./Message";
 import { MessageResumeBtn } from "./MessageResumeBtn";
 import { MessageForm } from "./MessageForm";
-
-interface Props {
-  outerDiv: React.RefObject<HTMLDivElement>;
-  filteredMessages: IMessage[];
-  users: IUserWithCount[];
-  pause: boolean;
-  showUserDialog: (user: IUserWithCount) => void;
-  setPause: React.Dispatch<React.SetStateAction<boolean>>;
-  validatePause: () => void;
-  scrollDown: () => void;
-  sendMessage: (message: IMessage) => void;
-}
-
-export function MessagesBox({
-  outerDiv,
-  filteredMessages,
-  users,
-  pause,
-  showUserDialog,
+import { useStore } from "@nanostores/react";
+import { $users } from "../stores/users";
+import {
+  $outerDiv,
+  $isScrollPaused,
   setPause,
   validatePause,
-  scrollDown,
-  sendMessage,
-}: Props): JSX.Element {
-  useEffect(() => {
-    setPause(false);
-    scrollDown();
-  }, []);
+} from "../stores/scroll";
+import { useScrollOnMount } from "../hooks/useScrollOnMount";
+import { $filteredMessages } from "../stores/messages";
+
+interface Props {
+  showUserDialog: (user: IUserWithCount) => void;
+}
+
+export function MessagesBox({ showUserDialog }: Props): JSX.Element {
+  const filteredMessages = useStore($filteredMessages);
+  const users = useStore($users);
+  const outerDiv = useStore($outerDiv);
+  const isScrollPaused = useStore($isScrollPaused);
+  useScrollOnMount();
 
   return (
     <div className="flex flex-1 flex-col overflow-auto  ">
@@ -55,7 +47,7 @@ export function MessagesBox({
             />
           ))}
         </div>
-        {pause && (
+        {isScrollPaused && (
           <MessageResumeBtn
             onClick={() => {
               setPause(false);
@@ -63,7 +55,7 @@ export function MessagesBox({
           />
         )}
       </div>
-      <MessageForm sendMessage={sendMessage} />
+      <MessageForm />
     </div>
   );
 }

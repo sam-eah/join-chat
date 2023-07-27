@@ -1,4 +1,4 @@
-import { IUser } from "../hooks/useMessageSocket";
+import { IUser } from "../api/messageSocket";
 
 interface Props {
   user: IUser;

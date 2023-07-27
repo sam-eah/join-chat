@@ -1,4 +1,4 @@
-import { IMessage } from "../hooks/useMessageSocket";
+import { IMessage } from "../api/messageSocket";
 import { UserBtn } from "./UserBtn";
 
 interface Props {

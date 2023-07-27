@@ -1,59 +1,14 @@
-import { useMemo, useState } from "react";
-import { useUnique } from "../hooks/useUnique";
+import { useState } from "react";
 import { UsersBox } from "./UsersBox";
 import { MessagesBox } from "./MessagesBox";
 import { UserDialog } from "./UserDialog";
-import { IMessage, IUserWithCount } from "../hooks/useMessageSocket";
+import { IUserWithCount } from "../api/messageSocket";
 import { IconSvg } from "./IconSvg";
 import { Options } from "./Options";
 
-interface Props {
-  messages: IMessage[];
-  outerDiv: React.RefObject<HTMLDivElement>;
-  pause: boolean;
-  setPause: React.Dispatch<React.SetStateAction<boolean>>;
-  validatePause: () => void;
-  sendMessage: (message: IMessage) => void;
-  scrollDown: () => void;
-  isSocketOpen: boolean;
-  closeSocket: () => void;
-  openSocket: () => void;
-}
+interface Props {}
 
-export function MainBox({
-  messages,
-  outerDiv,
-  pause,
-  setPause,
-  validatePause,
-  sendMessage,
-  scrollDown,
-  closeSocket,
-  isSocketOpen,
-  openSocket,
-}: Props) {
-  const [blockedUsernames, setBlockedUsernames] = useState<string[]>([]);
-  const filteredMessages = useMemo(
-    () => messages.filter((m) => !blockedUsernames.includes(m.user.username)),
-    [messages, blockedUsernames],
-  );
-  const users = useUnique(
-    messages.map((m) => ({
-      ...m.user,
-      count: messages.filter((_m) => _m.user.username === m.user.username)
-        .length,
-    })),
-    "username",
-  );
-  const allowedUsers = useMemo(
-    () => users.filter((u) => !blockedUsernames.includes(u.username)),
-    [users, blockedUsernames],
-  );
-  const blockedUsers = useMemo(
-    () => users.filter((u) => blockedUsernames.includes(u.username)),
-    [users, blockedUsernames],
-  );
-
+export function MainBox({}: Props) {
   const [currentUser, setCurrentUser] = useState<IUserWithCount | null>(null);
 
   const [showUsersBox, setShowUsersBox] = useState(false);
@@ -65,11 +20,7 @@ export function MainBox({
   return (
     <div className="relative flex flex-1 flex-col overflow-auto dark:bg-gray-800 dark:text-white ">
       <div className="flex items-center justify-between gap-1 px-4 py-2">
-        <Options
-          isSocketOpen={isSocketOpen}
-          closeSocket={closeSocket}
-          openSocket={openSocket}
-        />
+        <Options />
         <h1 className="text-sm font-semibold uppercase">
           {!showUsersBox ? "Chat" : "Utilisateurs"} du stream
         </h1>
@@ -86,30 +37,11 @@ export function MainBox({
         </button>
       </div>
       {showUsersBox ? (
-        <UsersBox
-          allowedUsers={allowedUsers}
-          blockedUsers={blockedUsers}
-          showUserDialog={showUserDialog}
-        />
+        <UsersBox showUserDialog={showUserDialog} />
       ) : (
-        <MessagesBox
-          filteredMessages={filteredMessages}
-          outerDiv={outerDiv}
-          pause={pause}
-          setPause={setPause}
-          showUserDialog={showUserDialog}
-          users={users}
-          validatePause={validatePause}
-          scrollDown={scrollDown}
-          sendMessage={sendMessage}
-        />
+        <MessagesBox showUserDialog={showUserDialog} />
       )}
-      <UserDialog
-        filteredUsers={blockedUsernames}
-        setFilteredUsers={setBlockedUsernames}
-        user={currentUser}
-        closeDialog={() => setCurrentUser(null)}
-      />
+      <UserDialog user={currentUser} closeDialog={() => setCurrentUser(null)} />
     </div>
   );
 }

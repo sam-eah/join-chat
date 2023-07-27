@@ -1,16 +1,12 @@
+import { useStore } from "@nanostores/react";
+import { $isSocketOpen, closeSocket, openSocket } from "../stores/socket";
 import { IconSvg } from "./IconSvg";
 
-interface Props {
-  isSocketOpen: boolean;
-  closeSocket: () => void;
-  openSocket: () => void;
-}
+interface Props {}
 
-export function Options({
-  isSocketOpen,
-  closeSocket,
-  openSocket,
-}: Props): JSX.Element {
+export function Options({}: Props): JSX.Element {
+  const isSocketOpen = useStore($isSocketOpen);
+
   return (
     <>
       {isSocketOpen ? (

@@ -1,29 +1,23 @@
-import { useEffect, useRef } from "react";
-import { IUserWithCount } from "../hooks/useMessageSocket";
+import { useRef } from "react";
+import { IUserWithCount } from "../api/messageSocket";
+import { useStore } from "@nanostores/react";
+import {
+  $blockedUsernames,
+  addBlockedUsername,
+  removeBlockedUsername,
+} from "../stores/users";
+import { useUserDialog } from "../hooks/useUserDialog";
 
 interface Props {
   user: IUserWithCount | null;
-  filteredUsers: string[];
-  setFilteredUsers: (usernames: string[]) => void;
   closeDialog: () => void;
 }
 
-export function UserDialog({
-  user,
-  filteredUsers,
-  setFilteredUsers,
-  closeDialog,
-}: Props): JSX.Element {
+export function UserDialog({ user, closeDialog }: Props): JSX.Element {
   const dialog = useRef<HTMLDialogElement>(null);
+  const blockedUsernames = useStore($blockedUsernames);
 
-  useEffect(() => {
-    if (user && !dialog.current?.open) {
-      dialog.current?.showModal();
-    }
-    if (!user && dialog.current?.open) {
-      dialog.current?.close();
-    }
-  }, [user]);
+  useUserDialog(user, dialog.current);
 
   const click = (e: React.MouseEvent<HTMLDialogElement, MouseEvent>) => {
     const dialogDimensions = dialog.current?.getBoundingClientRect();
@@ -40,13 +34,13 @@ export function UserDialog({
 
   const blockUser = () => {
     if (!user) return;
-    setFilteredUsers([...filteredUsers, user.username]);
+    addBlockedUsername(user.username);
     closeDialog();
   };
 
   const unBlockUser = () => {
     if (!user) return;
-    setFilteredUsers(filteredUsers.filter((u) => u !== user.username));
+    removeBlockedUsername(user.username);
     closeDialog();
   };
 
@@ -62,7 +56,7 @@ export function UserDialog({
             {user.username}
           </h1>
           <p className="mb-2">{user.count} message(s) envoyé(s)</p>
-          {filteredUsers.includes(user.username) ? (
+          {blockedUsernames.includes(user.username) ? (
             <button
               className="rounded-lg bg-purple-500 px-3 py-2 text-sm font-bold text-white hover:bg-purple-700"
               onClick={unBlockUser}

@@ -1,17 +1,16 @@
-import { IUserWithCount } from "../hooks/useMessageSocket";
+import { useStore } from "@nanostores/react";
+import { IUserWithCount } from "../api/messageSocket";
 import { UserBtn } from "./UserBtn";
+import { $allowedUsers, $blockedUsers } from "../stores/users";
 
 interface Props {
-  allowedUsers: IUserWithCount[];
-  blockedUsers: IUserWithCount[];
   showUserDialog: (user: IUserWithCount) => void;
 }
 
-export function UsersBox({
-  allowedUsers,
-  blockedUsers,
-  showUserDialog,
-}: Props): JSX.Element {
+export function UsersBox({ showUserDialog }: Props): JSX.Element {
+  const allowedUsers = useStore($allowedUsers);
+  const blockedUsers = useStore($blockedUsers);
+
   return (
     <div className="px-4">
       <h2 className="mb-1 mt-4">Utilisateurs :</h2>

@@ -1,11 +1,9 @@
 import { useRef, useState } from "react";
-import { IMessage } from "../hooks/useMessageSocket";
+import { sendMessage } from "../stores/socket";
 
-interface Props {
-  sendMessage: (message: IMessage) => void;
-}
+interface Props {}
 
-export function MessageForm({ sendMessage }: Props): JSX.Element {
+export function MessageForm({}: Props): JSX.Element {
   const [input, setInput] = useState("");
   const form = useRef<HTMLFormElement>(null);
 
